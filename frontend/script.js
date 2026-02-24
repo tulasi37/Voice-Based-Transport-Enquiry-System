@@ -28,8 +28,8 @@ function startListening() {
                 // If there's transport data, display it
                 document.getElementById('result').innerHTML = `
                     <h2>Available Transport:</h2>
-                    <p>Type: ${data.type}</p>
-                    <p>Route: ${data.route}</p>
+                    <p>From: ${data.source}</p>
+<p>To: ${data.destination}</p>
                     <p>Departure: ${data.departure_time}</p>
                     <p>Arrival: ${data.arrival_time}</p>
                 `;
