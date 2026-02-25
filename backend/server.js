@@ -15,21 +15,33 @@ app.post("/query", (req, res) => {
             return res.status(400).json({ message: "Voice input required" });
         }
 
+        // Clean input (supports Telugu Unicode range)
         const cleanText = voiceText
-    .toLowerCase()
-    .replace(/[^\w\s]/gi, "")
-    .trim();
+            .toLowerCase()
+            .replace(/[^\w\u0C00-\u0C7F\s]/gi, "")
+            .trim();
 
-const parts = cleanText.split(/\s+to\s+/);
+        let source = "";
+        let destination = "";
 
-if (parts.length !== 2) {
-    return res.status(400).json({
-        message: "Say like: Guntur to Hyderabad"
-    });
-}
+        // 🔹 English pattern: Hyderabad to Guntur
+        let englishMatch = cleanText.split(/\s+(?:to|two)\s+/);
 
-        const source = parts[0].trim();
-        const destination = parts[1].trim();
+        if (englishMatch.length === 2) {
+            source = englishMatch[0].trim();
+            destination = englishMatch[1].trim();
+        } 
+        // 🔹 Telugu pattern: హైదరాబాద్ నుండి గుంటూరు
+        else if (cleanText.includes("నుండి")) {
+            const parts = cleanText.split("నుండి");
+            source = parts[0].trim();
+            destination = parts[1].trim().replace("కి", "").trim();
+        } 
+        else {
+            return res.status(400).json({
+                message: "Could not detect source and destination"
+            });
+        }
 
         console.log("Searching:", source, "→", destination);
 
@@ -42,12 +54,13 @@ if (parts.length !== 2) {
         `;
 
         db.query(sql, [source, destination], (err, results) => {
+
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
 
             if (results.length === 0) {
-                return res.json({ message: "No traveling available" });
+                return res.json({ message: "No bus available" });
             }
 
             res.json(results[0]);
