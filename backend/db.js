@@ -5,7 +5,7 @@ const db = mysql.createConnection({
     user: "backend_user",   // use dedicated user
     password: "Backend@123",
     database: "transport_db"
-});
+});//
 //
 db.connect(err => {
     if (err) {
