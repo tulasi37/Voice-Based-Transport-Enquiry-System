@@ -12,7 +12,7 @@ db.connect(err => {
         console.error("Database connection failed:", err.message);
     } else {
         console.log("Database Connected");
-    }
+    }//
 });
 
 export default db;//
