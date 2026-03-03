@@ -6,7 +6,7 @@ const db = mysql.createConnection({
     password: "Backend@123",
     database: "transport_db"
 });
-
+//
 db.connect(err => {
     if (err) {
         console.error("Database connection failed:", err.message);
